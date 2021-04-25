@@ -1,0 +1,26 @@
+@font-face {
+  font-family: Space-Mono;
+  src: url("../ttf/Space.ttf");
+}
+:root {
+  --myPadding: 8px;
+  --master-width: 100%;
+  --master-height: 60px;
+  --button-height: calc(var(--master-height) - calc(var(--myPadding) * 2));
+  --button-end: calc(100% - calc(var(--button-height) + var(--myPadding)));
+  --bg: rgb(209, 209, 209);
+  --medium: rgb(198, 115, 125);
+  --light: rgb(187, 21, 40);
+}
+* {
+  font-size: 16px;
+  scrollbar-width: none;
+  box-sizing: border-box;
+  font-family: Space-Mono;
+  -ms-overflow-style: none;
+}
+body {
+  margin: 0;
+  width: 280px;
+  height: 480px;
+}
