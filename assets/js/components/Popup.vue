@@ -41,7 +41,7 @@ export default {
       bool ? (value = start) : (value = end);
       return value;
     },
-    getHistory() {
+    draw() {
       chrome.history.search(
         {
           startTime: this.getTime(true),
@@ -62,15 +62,15 @@ export default {
             temp.radius = temp.visitCount / 20;
           }
           console.log(this.nodes);
-          this.mountBubbles();
+          this.d3();
         }
       );
     },
-    mountBubbles() {
+    d3() {
       const forceX = d3.forceX(this.width / 2).strength(0.1);
       const forceY = d3.forceY(this.height / 2).strength(0.1);
       const elem = document.getElementById("label");
-      //define and stop the simulation
+      // define d3 instance
       var simulation = d3
         .forceSimulation()
         .nodes(this.nodes)
@@ -89,6 +89,7 @@ export default {
             return `translate(${d.x},${d.y})`;
           });
         });
+      // create svg
       var svg = d3
         .select("#container")
         .append("svg")
@@ -144,7 +145,7 @@ export default {
     },
   },
   mounted() {
-    this.getHistory();
+    this.draw();
   },
 };
 </script>

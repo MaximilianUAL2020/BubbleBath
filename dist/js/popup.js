@@ -58,7 +58,7 @@ __webpack_require__.r(__webpack_exports__);
       bool ? value = start : value = end;
       return value;
     },
-    getHistory: function getHistory() {
+    draw: function draw() {
       var _this = this;
 
       chrome.history.search({
@@ -84,13 +84,15 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(_this.nodes);
 
-        _this.mountBubbles();
+        _this.d3();
       });
     },
-    mountBubbles: function mountBubbles() {
+    d3: function d3() {
       var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.1);
+
       var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.1);
-      var elem = document.getElementById("label"); //define and stop the simulation
+
+      var elem = document.getElementById("label"); // define d3 instance
 
       var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
@@ -98,8 +100,11 @@ __webpack_require__.r(__webpack_exports__);
         svg.selectAll("g").attr("transform", function (d) {
           return "translate(".concat(d.x, ",").concat(d.y, ")");
         });
-      });
+      }); // create svg
+
+
       var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", this.width).attr("height", this.height);
+
       var sketch = svg.selectAll("g").data(this.nodes); // append container
 
       var container = sketch.enter().append("g"); // append circle
@@ -109,10 +114,12 @@ __webpack_require__.r(__webpack_exports__);
       }).style("fill", "rgb(187, 21, 40)") // mouse over
       .on("mouseover", function (d, i) {
         d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)");
+
         elem.innerHTML = i.title;
       }) // mouse out
       .on("mouseout", function () {
         d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)");
+
         elem.innerHTML = "Hover over bubbles";
       }) // click event
       .on("click", function (d, i) {
@@ -134,7 +141,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    this.getHistory();
+    this.draw();
   }
 });
 
