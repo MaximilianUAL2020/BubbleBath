@@ -17,117 +17,116 @@
 <script>
 import * as d3 from "d3";
 export default {
-  mounted() {
-    const width = 248,
-      height = 296;
-
-    var nodes = [
-        { radius: 0, x: 0, y: 0, t: "" },
-        {
-          radius: 40,
-          x: randomPos().w,
-          y: randomPos().h,
-          label: "IN",
-          name: "Instagram",
-        },
-        {
-          radius: 60,
-          x: randomPos().w,
-          y: randomPos().h,
-          label: "YT",
-          name: "YouTube",
-        },
-        {
-          radius: 40,
-          x: randomPos().w,
-          y: randomPos().h,
-          label: "FB",
-          name: "Facebook",
-        },
-        {
-          radius: 50,
-          x: randomPos().w,
-          y: randomPos().h,
-          label: "AR",
-          name: "Are.na",
-        },
-        {
-          radius: 30,
-          x: randomPos().w,
-          y: randomPos().h,
-          label: "RE",
-          name: "Reddit",
-        },
-      ],
-      root = nodes[0];
-
-    root.radius = 0;
-    root.fixed = true;
-
-    const forceX = d3.forceX(width / 2).strength(0.1);
-    const forceY = d3.forceY(height / 2).strength(0.1);
-
-    //define and stop the simulation
-    var simulation = d3
-      .forceSimulation()
-      .nodes(nodes)
-      .force("x", forceX)
-      .force("y", forceY)
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("charge", d3.forceManyBody().strength(0))
-      .force(
-        "collision",
-        d3.forceCollide().radius((d) => {
+  data() {
+    return {
+      width: 248,
+      height: 296,
+      nodes: "",
+    };
+  },
+  methods: {
+    randomPos() {
+      let rw = Math.floor(Math.random() * this.width);
+      let rh = Math.floor(Math.random() * this.height);
+      return { w: rw, h: rh };
+    },
+    getTime(bool) {
+      var value;
+      var date = new Date();
+      var start = date.setHours(0, 0, 0, 0);
+      var end = date.setHours(23, 59, 59, 999);
+      var offset = date.getTimezoneOffset();
+      start + offset;
+      end + offset;
+      bool ? (value = start) : (value = end);
+      return value;
+    },
+    mountBubbles() {
+      const forceX = d3.forceX(this.width / 2).strength(0.1);
+      const forceY = d3.forceY(this.height / 2).strength(0.1);
+      const elem = document.getElementById("label");
+      //define and stop the simulation
+      var simulation = d3 
+        .forceSimulation()
+        .nodes(this.nodes)
+        .force("x", forceX)
+        .force("y", forceY)
+        .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+        .force("charge", d3.forceManyBody().strength(0))
+        .force(
+          "collision",
+          d3.forceCollide().radius((d) => {
+            return d.radius;
+          })
+        )
+        .force("tick", () => {
+          svg.selectAll("g").attr("transform", (d) => {
+            return `translate(${d.x},${d.y})`;
+          });
+        });
+      var svg = d3
+        .select("#container")
+        .append("svg")
+        .attr("width", this.width)
+        .attr("height", this.height);
+      var sketch = svg.selectAll("g").data(this.nodes);
+      // append container
+      var container = sketch.enter().append("g");
+      // append circle
+      container
+        .style("cursor", "pointer")
+        .append("circle")
+        .attr("r", (d) => {
           return d.radius;
         })
-      )
-      .force("tick", () => {
-        svg.selectAll("g").attr("transform", (d) => {
-          return `translate(${d.x},${d.y})`;
+        .style("fill", "rgb(187, 21, 40)")
+        .on("mouseover", function(d, i) {
+          d3.select(this).style("fill", "rgb(198, 115, 125)");
+          elem.innerHTML = i.title;
+        })
+        .on("mouseout", function() {
+          d3.select(this).style("fill", "rgb(187, 21, 40)");
+          elem.innerHTML = "Hover over bubbles";
         });
-      });
-
-    var svg = d3
-      .select("#container")
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-    var sketch = svg.selectAll("g").data(nodes.slice(1));
-    // append container
-    var container = sketch.enter().append("g");
-    // append circle
-    container
-      .style("cursor", "pointer")
-      .append("circle")
-      .attr("r", (d) => {
-        return d.radius;
-      })
-      .style("fill", "rgb(187, 21, 40)")
-      .on("mouseover", function(d) {
-        console.log(d);
-        d3.select(this).style("fill", "rgb(198, 115, 125)");
-        // elem.innerHTML = `${d.name} (${d.radius}min)`;
-      })
-      .on("mouseout", function(d) {
-        d3.select(this).style("fill", "rgb(187, 21, 40)");
-        // elem.innerHTML = "Hover over bubbles";
-      });
-    // append text
-    container
-      .append("text")
-      .text((d) => {
-        return d.label;
-      })
-      .style("text-anchor", "middle")
-      .style("pointer-events", "none")
-      .style("fill", "rgb(209, 209, 209)")
-      .style("dominant-baseline", "middle");
-    function randomPos() {
-      let rw = Math.floor(Math.random() * width);
-      let rh = Math.floor(Math.random() * height);
-      return { w: rw, h: rh };
-    }
+      // append text
+      container
+        .append("text")
+        .text((d) => {
+          return d.visitCount;
+        })
+        .style("text-anchor", "middle")
+        .style("pointer-events", "none")
+        .style("fill", "rgb(209, 209, 209)")
+        .style("dominant-baseline", "middle");
+    },
+    getHistory() {
+      chrome.history.search(
+        {
+          startTime: this.getTime(true),
+          endTime: this.getTime(false),
+          maxResults: 100000,
+          text: "",
+        },
+        (res) => {
+          this.nodes = res;
+          this.nodes.sort(
+            (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
+          );
+          this.nodes.splice(5, this.nodes.length);
+          for (let i = 0; i < this.nodes.length; i++) {
+            let temp = this.nodes[i];
+            temp.x = this.randomPos().x;
+            temp.y = this.randomPos().y;
+            temp.radius = 50;
+          }
+          console.log(this.nodes);
+          this.mountBubbles();
+        }
+      );
+    },
+  },
+  mounted() {
+    this.getHistory();
   },
 };
 </script>

@@ -31,84 +31,96 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mounted: function mounted() {
-    var width = 248,
-        height = 296;
-    var nodes = [{
-      radius: 0,
-      x: 0,
-      y: 0,
-      t: ""
-    }, {
-      radius: 40,
-      x: randomPos().w,
-      y: randomPos().h,
-      label: "IN",
-      name: "Instagram"
-    }, {
-      radius: 60,
-      x: randomPos().w,
-      y: randomPos().h,
-      label: "YT",
-      name: "YouTube"
-    }, {
-      radius: 40,
-      x: randomPos().w,
-      y: randomPos().h,
-      label: "FB",
-      name: "Facebook"
-    }, {
-      radius: 50,
-      x: randomPos().w,
-      y: randomPos().h,
-      label: "AR",
-      name: "Are.na"
-    }, {
-      radius: 30,
-      x: randomPos().w,
-      y: randomPos().h,
-      label: "RE",
-      name: "Reddit"
-    }],
-        root = nodes[0];
-    root.radius = 0;
-    root.fixed = true;
-    var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(width / 2).strength(0.1);
-    var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(height / 2).strength(0.1); //define and stop the simulation
-
-    var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(width / 2, height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
-      return d.radius;
-    })).force("tick", function () {
-      svg.selectAll("g").attr("transform", function (d) {
-        return "translate(".concat(d.x, ",").concat(d.y, ")");
-      });
-    });
-    var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", width).attr("height", height);
-    var sketch = svg.selectAll("g").data(nodes.slice(1)); // append container
-
-    var container = sketch.enter().append("g"); // append circle
-
-    container.style("cursor", "pointer").append("circle").attr("r", function (d) {
-      return d.radius;
-    }).style("fill", "rgb(187, 21, 40)").on("mouseover", function (d) {
-      console.log(d);
-      d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)"); // elem.innerHTML = `${d.name} (${d.radius}min)`;
-    }).on("mouseout", function (d) {
-      d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)"); // elem.innerHTML = "Hover over bubbles";
-    }); // append text
-
-    container.append("text").text(function (d) {
-      return d.label;
-    }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle");
-
-    function randomPos() {
-      var rw = Math.floor(Math.random() * width);
-      var rh = Math.floor(Math.random() * height);
+  data: function data() {
+    return {
+      width: 248,
+      height: 296,
+      nodes: ""
+    };
+  },
+  methods: {
+    randomPos: function randomPos() {
+      var rw = Math.floor(Math.random() * this.width);
+      var rh = Math.floor(Math.random() * this.height);
       return {
         w: rw,
         h: rh
       };
+    },
+    getTime: function getTime(bool) {
+      var value;
+      var date = new Date();
+      var start = date.setHours(0, 0, 0, 0);
+      var end = date.setHours(23, 59, 59, 999);
+      var offset = date.getTimezoneOffset();
+      start + offset;
+      end + offset;
+      bool ? value = start : value = end;
+      return value;
+    },
+    mountBubbles: function mountBubbles() {
+      var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.1);
+      var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.1);
+      var elem = document.getElementById("label"); //define and stop the simulation
+
+      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
+        return d.radius;
+      })).force("tick", function () {
+        svg.selectAll("g").attr("transform", function (d) {
+          return "translate(".concat(d.x, ",").concat(d.y, ")");
+        });
+      });
+      var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", this.width).attr("height", this.height);
+      var sketch = svg.selectAll("g").data(this.nodes); // append container
+
+      var container = sketch.enter().append("g"); // append circle
+
+      container.style("cursor", "pointer").append("circle").attr("r", function (d) {
+        return d.radius;
+      }).style("fill", "rgb(187, 21, 40)").on("mouseover", function (d, i) {
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)");
+        elem.innerHTML = i.title;
+      }).on("mouseout", function () {
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)");
+        elem.innerHTML = "Hover over bubbles";
+      }); // append text
+
+      container.append("text").text(function (d) {
+        return d.visitCount;
+      }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle");
+    },
+    getHistory: function getHistory() {
+      var _this = this;
+
+      chrome.history.search({
+        startTime: this.getTime(true),
+        endTime: this.getTime(false),
+        maxResults: 100000,
+        text: ""
+      }, function (res) {
+        _this.nodes = res;
+
+        _this.nodes.sort(function (a, b) {
+          return parseFloat(b.visitCount) - parseFloat(a.visitCount);
+        });
+
+        _this.nodes.splice(5, _this.nodes.length);
+
+        for (var i = 0; i < _this.nodes.length; i++) {
+          var temp = _this.nodes[i];
+          temp.x = _this.randomPos().x;
+          temp.y = _this.randomPos().y;
+          temp.radius = 50;
+        }
+
+        console.log(_this.nodes);
+
+        _this.mountBubbles();
+      });
     }
+  },
+  mounted: function mounted() {
+    this.getHistory();
   }
 });
 
