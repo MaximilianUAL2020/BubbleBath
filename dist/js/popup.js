@@ -58,37 +58,6 @@ __webpack_require__.r(__webpack_exports__);
       bool ? value = start : value = end;
       return value;
     },
-    mountBubbles: function mountBubbles() {
-      var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.1);
-      var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.1);
-      var elem = document.getElementById("label"); //define and stop the simulation
-
-      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
-        return d.radius;
-      })).force("tick", function () {
-        svg.selectAll("g").attr("transform", function (d) {
-          return "translate(".concat(d.x, ",").concat(d.y, ")");
-        });
-      });
-      var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", this.width).attr("height", this.height);
-      var sketch = svg.selectAll("g").data(this.nodes); // append container
-
-      var container = sketch.enter().append("g"); // append circle
-
-      container.style("cursor", "pointer").append("circle").attr("r", function (d) {
-        return d.radius;
-      }).style("fill", "rgb(187, 21, 40)").on("mouseover", function (d, i) {
-        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)");
-        elem.innerHTML = i.title;
-      }).on("mouseout", function () {
-        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)");
-        elem.innerHTML = "Hover over bubbles";
-      }); // append text
-
-      container.append("text").text(function (d) {
-        return d.visitCount;
-      }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle");
-    },
     getHistory: function getHistory() {
       var _this = this;
 
@@ -110,13 +79,58 @@ __webpack_require__.r(__webpack_exports__);
           var temp = _this.nodes[i];
           temp.x = _this.randomPos().x;
           temp.y = _this.randomPos().y;
-          temp.radius = 50;
+          temp.radius = temp.visitCount / 20;
         }
 
         console.log(_this.nodes);
 
         _this.mountBubbles();
       });
+    },
+    mountBubbles: function mountBubbles() {
+      var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.1);
+      var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.1);
+      var elem = document.getElementById("label"); //define and stop the simulation
+
+      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
+        return d.radius;
+      })).force("tick", function () {
+        svg.selectAll("g").attr("transform", function (d) {
+          return "translate(".concat(d.x, ",").concat(d.y, ")");
+        });
+      });
+      var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", this.width).attr("height", this.height);
+      var sketch = svg.selectAll("g").data(this.nodes); // append container
+
+      var container = sketch.enter().append("g"); // append circle
+
+      container.style("cursor", "pointer").append("circle").attr("r", function (d) {
+        return d.radius;
+      }).style("fill", "rgb(187, 21, 40)") // mouse over
+      .on("mouseover", function (d, i) {
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)");
+        elem.innerHTML = i.title;
+      }) // mouse out
+      .on("mouseout", function () {
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)");
+        elem.innerHTML = "Hover over bubbles";
+      }) // click event
+      .on("click", function (d, i) {
+        chrome.tabs.query({
+          active: true,
+          currentWindow: true
+        }, function (tabs) {
+          console.log(tabs[0]);
+          chrome.tabs.sendMessage(tabs[0].id, {
+            message: "url",
+            url: i.url
+          });
+        });
+      }); // append text
+
+      container.append("text").text(function (d) {
+        return d.visitCount;
+      }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle");
     }
   },
   mounted: function mounted() {
@@ -143,7 +157,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@font-face {\n  font-family: Space-Mono;\n  src: url(\"ttf/Space.ttf\");\n}\n[data-v-a8fbc54a]:root {\n  --myPadding: 8px;\n  --master-width: 100%;\n  --master-height: 60px;\n  --button-height: calc(var(--master-height) - calc(var(--myPadding) * 2));\n  --button-end: calc(100% - calc(var(--button-height) + var(--myPadding)));\n  --bg: rgb(209, 209, 209);\n  --medium: rgb(152, 126, 232);\n  --light: rgb(94, 43, 255);\n}\n*[data-v-a8fbc54a] {\n  font-size: 16px;\n  scrollbar-width: none;\n  box-sizing: border-box;\n  font-family: Space-Mono;\n  -ms-overflow-style: none;\n}\nbody[data-v-a8fbc54a] {\n  margin: 0;\n  width: 280px;\n  height: 480px;\n}\ntext[data-v-a8fbc54a] {\n  pointer-events: none;\n}\ng[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n}\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--bg);\n  grid-template-columns: repeat(3, 1fr);\n  grid-template-rows: auto auto auto auto var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"preview preview preview\"\n    \"toggle toggle toggle\";\n}\n.flex[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.outline[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--bg);\n  background: var(--light);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  overflow: hidden;\n  grid-area: canvas;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: preview;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  border: none;\n  grid-area: toggle;\n  position: relative;\n}\n#no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n[data-v-a8fbc54a]::-moz-selection {\n  background: var(--light);\n  color: var(--bg);\n}\n[data-v-a8fbc54a]::selection {\n  background: var(--light);\n  color: var(--bg);\n}\n.no-select[data-v-a8fbc54a] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  color: var(--bg);\n  border-radius: inherit;\n  background-color: transparent;\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  color: var(--light);\n  background: var(--bg);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\n.switch-checkbox[data-v-a8fbc54a] {\n  opacity: 0;\n  position: absolute;\n  pointer-events: none;\n}\n.switch-label[data-v-a8fbc54a] {\n  padding: 0;\n  display: block;\n  cursor: pointer;\n  overflow: hidden;\n  height: var(--master-height);\n  line-height: var(--master-height);\n  border-radius: var(--master-height);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\n.switch-label[data-v-a8fbc54a]:before {\n  bottom: 0;\n  margin: 0px;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 100px;\n  top: var(--myPadding);\n  right: var(--button-end);\n  width: var(--button-height);\n  height: var(--button-height);\n  background: var(--light);\n  transition: all 0.2s;\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a] {\n  background: var(--light);\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a]:before {\n  right: var(--myPadding);\n  background: var(--bg);\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--bg);\n  grid-template-columns: repeat(3, 1fr);\n  grid-template-rows: auto auto auto auto var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"preview preview preview\"\n    \"toggle toggle toggle\";\n}\n.flex[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.outline[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--bg);\n  background: var(--light);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  overflow: hidden;\n  grid-area: canvas;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: preview;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  border: none;\n  grid-area: toggle;\n  position: relative;\n}\n#no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n[data-v-a8fbc54a]::-moz-selection {\n  background: var(--light);\n  color: var(--bg);\n}\n[data-v-a8fbc54a]::selection {\n  background: var(--light);\n  color: var(--bg);\n}\n.no-select[data-v-a8fbc54a] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  color: var(--bg);\n  border-radius: inherit;\n  background-color: transparent;\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  color: var(--light);\n  background: var(--bg);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\n.switch-checkbox[data-v-a8fbc54a] {\n  opacity: 0;\n  position: absolute;\n  pointer-events: none;\n}\n.switch-label[data-v-a8fbc54a] {\n  padding: 0;\n  display: block;\n  cursor: pointer;\n  overflow: hidden;\n  height: var(--master-height);\n  line-height: var(--master-height);\n  border-radius: var(--master-height);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\n.switch-label[data-v-a8fbc54a]:before {\n  bottom: 0;\n  margin: 0px;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 100px;\n  top: var(--myPadding);\n  right: var(--button-end);\n  width: var(--button-height);\n  height: var(--button-height);\n  background: var(--light);\n  transition: all 0.2s;\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a] {\n  background: var(--light);\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a]:before {\n  right: var(--myPadding);\n  background: var(--bg);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

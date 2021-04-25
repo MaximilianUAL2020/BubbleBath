@@ -41,12 +41,37 @@ export default {
       bool ? (value = start) : (value = end);
       return value;
     },
+    getHistory() {
+      chrome.history.search(
+        {
+          startTime: this.getTime(true),
+          endTime: this.getTime(false),
+          maxResults: 100000,
+          text: "",
+        },
+        (res) => {
+          this.nodes = res;
+          this.nodes.sort(
+            (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
+          );
+          this.nodes.splice(5, this.nodes.length);
+          for (let i = 0; i < this.nodes.length; i++) {
+            let temp = this.nodes[i];
+            temp.x = this.randomPos().x;
+            temp.y = this.randomPos().y;
+            temp.radius = temp.visitCount / 20;
+          }
+          console.log(this.nodes);
+          this.mountBubbles();
+        }
+      );
+    },
     mountBubbles() {
       const forceX = d3.forceX(this.width / 2).strength(0.1);
       const forceY = d3.forceY(this.height / 2).strength(0.1);
       const elem = document.getElementById("label");
       //define and stop the simulation
-      var simulation = d3 
+      var simulation = d3
         .forceSimulation()
         .nodes(this.nodes)
         .force("x", forceX)
@@ -80,13 +105,31 @@ export default {
           return d.radius;
         })
         .style("fill", "rgb(187, 21, 40)")
+        // mouse over
         .on("mouseover", function(d, i) {
           d3.select(this).style("fill", "rgb(198, 115, 125)");
           elem.innerHTML = i.title;
         })
+        // mouse out
         .on("mouseout", function() {
           d3.select(this).style("fill", "rgb(187, 21, 40)");
           elem.innerHTML = "Hover over bubbles";
+        })
+        // click event
+        .on("click", function(d, i) {
+          chrome.tabs.query(
+            {
+              active: true,
+              currentWindow: true,
+            },
+            (tabs) => {
+              console.log(tabs[0]);
+              chrome.tabs.sendMessage(tabs[0].id, {
+                message: "url",
+                url: i.url,
+              });
+            }
+          );
         });
       // append text
       container
@@ -99,31 +142,6 @@ export default {
         .style("fill", "rgb(209, 209, 209)")
         .style("dominant-baseline", "middle");
     },
-    getHistory() {
-      chrome.history.search(
-        {
-          startTime: this.getTime(true),
-          endTime: this.getTime(false),
-          maxResults: 100000,
-          text: "",
-        },
-        (res) => {
-          this.nodes = res;
-          this.nodes.sort(
-            (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
-          );
-          this.nodes.splice(5, this.nodes.length);
-          for (let i = 0; i < this.nodes.length; i++) {
-            let temp = this.nodes[i];
-            temp.x = this.randomPos().x;
-            temp.y = this.randomPos().y;
-            temp.radius = 50;
-          }
-          console.log(this.nodes);
-          this.mountBubbles();
-        }
-      );
-    },
   },
   mounted() {
     this.getHistory();
@@ -132,39 +150,6 @@ export default {
 </script>
 
 <style scoped>
-@font-face {
-  font-family: Space-Mono;
-  src: url("ttf/Space.ttf");
-}
-:root {
-  --myPadding: 8px;
-  --master-width: 100%;
-  --master-height: 60px;
-  --button-height: calc(var(--master-height) - calc(var(--myPadding) * 2));
-  --button-end: calc(100% - calc(var(--button-height) + var(--myPadding)));
-  --bg: rgb(209, 209, 209);
-  --medium: rgb(152, 126, 232);
-  --light: rgb(94, 43, 255);
-}
-* {
-  font-size: 16px;
-  scrollbar-width: none;
-  box-sizing: border-box;
-  font-family: Space-Mono;
-  -ms-overflow-style: none;
-}
-body {
-  margin: 0;
-  width: 280px;
-  height: 480px;
-}
-text {
-  pointer-events: none;
-}
-g:hover {
-  cursor: pointer;
-}
-
 .main-wrapper {
   gap: 1em;
   width: 100%;
