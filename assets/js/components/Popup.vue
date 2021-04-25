@@ -1,15 +1,19 @@
 <template>
   <div class="main-wrapper">
     <!-- svg canvas -->
-    <div class="outline" id="container"></div>
-    <!-- preview -->
-    <div class="flex filled no-select">
-      <span id="label">Hover over bubbles</span>
+    <div class="flex outline no-select">
+      <div v-if="nodes" id="container"></div>
+      <span v-if="!nodes">no history</span>
     </div>
-    <!-- toggle -->
-    <div class="switch no-select">
-      <input id="my-switch" type="checkbox" class="switch-checkbox" />
-      <label class="switch-label" for="my-switch"></label>
+    <!-- preview -->
+    <div class="flex outline no-select">
+      <span id="label">{{ state }}</span>
+    </div>
+    <!-- clear -->
+    <div>
+      <button @click="clearHistory" :disabled="!nodes">
+        Clear History
+      </button>
     </div>
   </div>
 </template>
@@ -21,7 +25,7 @@ export default {
     return {
       width: 248,
       height: 296,
-      nodes: "",
+      nodes: true,
     };
   },
   methods: {
@@ -41,7 +45,18 @@ export default {
       bool ? (value = start) : (value = end);
       return value;
     },
-    draw() {
+    setRadius(count) {
+      let radius;
+      if (count < 500) {
+        radius = 25;
+      } else if (count > 500 && count < 1000) {
+        radius = count / 20;
+      } else if (count > 1200) {
+        radius = 40;
+      }
+      return radius;
+    },
+    history() {
       chrome.history.search(
         {
           startTime: this.getTime(true),
@@ -51,6 +66,10 @@ export default {
         },
         (res) => {
           this.nodes = res;
+          if (!this.nodes.length) {
+            this.nodes = false;
+            return;
+          }
           this.nodes.sort(
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
           );
@@ -59,7 +78,7 @@ export default {
             let temp = this.nodes[i];
             temp.x = this.randomPos().x;
             temp.y = this.randomPos().y;
-            temp.radius = temp.visitCount / 20;
+            temp.radius = this.setRadius(temp.visitCount);
           }
           console.log(this.nodes);
           this.d3();
@@ -67,8 +86,8 @@ export default {
       );
     },
     d3() {
-      const forceX = d3.forceX(this.width / 2).strength(0.1);
-      const forceY = d3.forceY(this.height / 2).strength(0.1);
+      const forceX = d3.forceX(this.width / 2).strength(0.05);
+      const forceY = d3.forceY(this.height / 2).strength(0.05);
       const elem = document.getElementById("label");
       // define d3 instance
       var simulation = d3
@@ -109,7 +128,14 @@ export default {
         // mouse over
         .on("mouseover", function(d, i) {
           d3.select(this).style("fill", "rgb(198, 115, 125)");
-          elem.innerHTML = i.title;
+          // create substring
+          if (i.title.length > 18) {
+            let sub = i.title.substring(0, 15);
+            let string = sub + "...";
+            elem.innerHTML = string;
+          } else {
+            elem.innerHTML = i.title;
+          }
         })
         // mouse out
         .on("mouseout", function() {
@@ -143,14 +169,54 @@ export default {
         .style("fill", "rgb(209, 209, 209)")
         .style("dominant-baseline", "middle");
     },
+    clearHistory() {
+      const moonLanding = new Date("July 20, 69 00:20:18 GMT+00:00");
+      let forever = moonLanding.getTime();
+      chrome.browsingData.remove(
+        {
+          since: forever,
+        },
+        {
+          appcache: true,
+          cache: true,
+          cacheStorage: true,
+          cookies: true,
+          downloads: false,
+          fileSystems: false,
+          formData: false,
+          history: true,
+          indexedDB: false,
+          localStorage: false,
+          passwords: false,
+          serviceWorkers: false,
+          webSQL: false,
+        },
+        () => {
+          this.nodes = "";
+        }
+      );
+    },
+  },
+  computed: {
+    state() {
+      if (this.nodes) {
+        return "Hover over Bubbles";
+      } else {
+        return "Start Browsing";
+      }
+    },
   },
   mounted() {
-    this.draw();
+    this.history();
   },
 };
 </script>
 
 <style scoped>
+#label {
+  overflow: hidden;
+  white-space: nowrap;
+}
 .main-wrapper {
   gap: 1em;
   width: 100%;
@@ -168,7 +234,7 @@ export default {
     "canvas canvas canvas"
     "canvas canvas canvas"
     "preview preview preview"
-    "toggle toggle toggle";
+    "clear clear clear";
 }
 .flex {
   display: flex;
@@ -199,9 +265,8 @@ export default {
   border-radius: 100px;
 }
 .main-wrapper div:nth-of-type(3) {
-  border: none;
-  grid-area: toggle;
-  position: relative;
+  grid-area: clear;
+  border-radius: 100px;
 }
 #no-border {
   border: none !important;
@@ -230,17 +295,25 @@ button:active {
   border: none;
   outline: none;
   cursor: pointer;
-  color: var(--bg);
   border-radius: inherit;
   background-color: transparent;
+  color: var(--bg);
+  background: var(--light);
+  border: 1px solid var(--bg);
   transition: all 0.2s;
 }
 button:hover {
   cursor: pointer;
+  background: transparent;
   color: var(--light);
-  background: var(--bg);
   border: 1px solid var(--light);
   transition: all 0.2s;
+}
+button:disabled {
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--medium);
+  border: 1px solid var(--medium);
 }
 .switch-checkbox {
   opacity: 0;

@@ -2,7 +2,7 @@
   "name": "210425_Build_1",
   "version": "1.0.0",
   "description": "Learning to code chrome extensions!",
-  "permissions": ["history", "tabs", "activeTab", "https://*/", "http://*/"],
+  "permissions": ["history", "tabs", "browsingData", "https://*/", "http://*/"],
   "content_scripts": [
     {
       "css": ["css/style.css"],
