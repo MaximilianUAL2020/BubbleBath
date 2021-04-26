@@ -30,16 +30,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      width: 248,
+      width: 246,
       height: 296,
-      nodes: true
+      nodes: "",
+      totalVisits: 0
     };
   },
   methods: {
@@ -62,20 +60,23 @@ __webpack_require__.r(__webpack_exports__);
       bool ? value = start : value = end;
       return value;
     },
-    setRadius: function setRadius(count) {
-      var radius;
+    getTotalVisits: function getTotalVisits() {
+      var temp = 0;
 
-      if (count < 500) {
-        radius = 25;
-      } else if (count > 500 && count < 1000) {
-        radius = count / 20;
-      } else if (count > 1200) {
-        radius = 40;
+      for (var i = 0; i < this.nodes.length; i++) {
+        temp += this.nodes[i].visitCount;
       }
 
+      this.totalVisits = temp;
+    },
+    setRadius: function setRadius(visits) {
+      var totalArea = this.width * this.height / 2;
+      var visitsFr = visits / this.totalVisits;
+      var area = totalArea * visitsFr;
+      var radius = Math.sqrt(area / Math.PI);
       return radius;
     },
-    history: function history() {
+    getHistory: function getHistory() {
       var _this = this;
 
       chrome.history.search({
@@ -85,17 +86,18 @@ __webpack_require__.r(__webpack_exports__);
         text: ""
       }, function (res) {
         _this.nodes = res;
+        if (!_this.nodes.length) return; // get total visits
 
-        if (!_this.nodes.length) {
-          _this.nodes = false;
-          return;
-        }
+        _this.getTotalVisits(); // sort array
+
 
         _this.nodes.sort(function (a, b) {
           return parseFloat(b.visitCount) - parseFloat(a.visitCount);
-        });
+        }); // trim array
 
-        _this.nodes.splice(5, _this.nodes.length);
+
+        _this.nodes.splice(5, _this.nodes.length); // set key values
+
 
         for (var i = 0; i < _this.nodes.length; i++) {
           var temp = _this.nodes[i];
@@ -103,8 +105,6 @@ __webpack_require__.r(__webpack_exports__);
           temp.y = _this.randomPos().y;
           temp.radius = _this.setRadius(temp.visitCount);
         }
-
-        console.log(_this.nodes);
 
         _this.d3();
       });
@@ -133,9 +133,9 @@ __webpack_require__.r(__webpack_exports__);
 
       container.style("cursor", "pointer").append("circle").attr("r", function (d) {
         return d.radius;
-      }).style("fill", "rgb(187, 21, 40)") // mouse over
+      }).style("fill", "rgb(23, 150, 23)") // mouse over
       .on("mouseover", function (d, i) {
-        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(198, 115, 125)"); // create substring
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(116, 180, 116)"); // create substring
 
 
         if (i.title.length > 18) {
@@ -147,7 +147,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       }) // mouse out
       .on("mouseout", function () {
-        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(187, 21, 40)");
+        d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(23, 150, 23)");
 
         elem.innerHTML = "Hover over bubbles";
       }) // click event
@@ -171,40 +171,22 @@ __webpack_require__.r(__webpack_exports__);
     clearHistory: function clearHistory() {
       var _this2 = this;
 
-      var moonLanding = new Date("July 20, 69 00:20:18 GMT+00:00");
-      var forever = moonLanding.getTime();
-      chrome.browsingData.remove({
-        since: forever
-      }, {
-        appcache: true,
-        cache: true,
-        cacheStorage: true,
-        cookies: true,
-        downloads: false,
-        fileSystems: false,
-        formData: false,
-        history: true,
-        indexedDB: false,
-        localStorage: false,
-        passwords: false,
-        serviceWorkers: false,
-        webSQL: false
-      }, function () {
+      chrome.history.deleteAll(function () {
         _this2.nodes = "";
       });
     }
   },
   computed: {
     state: function state() {
-      if (this.nodes) {
+      if (this.nodes.length) {
         return "Hover over Bubbles";
       } else {
-        return "Start Browsing";
+        return "No History";
       }
     }
   },
   mounted: function mounted() {
-    this.history();
+    this.getHistory();
   }
 });
 
@@ -31596,20 +31578,22 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "main-wrapper" }, [
-    _c("div", { staticClass: "flex outline no-select" }, [
-      _vm.nodes ? _c("div", { attrs: { id: "container" } }) : _vm._e(),
-      _vm._v(" "),
-      !_vm.nodes ? _c("span", [_vm._v("no history")]) : _vm._e()
-    ]),
+    _c("div", {
+      staticClass: "flex outline no-select",
+      attrs: { id: "container" }
+    }),
     _vm._v(" "),
     _c("div", { staticClass: "flex outline no-select" }, [
       _c("span", { attrs: { id: "label" } }, [_vm._v(_vm._s(_vm.state))])
     ]),
     _vm._v(" "),
-    _c("div", [
+    _c("div", { staticClass: "no-select" }, [
       _c(
         "button",
-        { attrs: { disabled: !_vm.nodes }, on: { click: _vm.clearHistory } },
+        {
+          attrs: { disabled: !_vm.nodes.length },
+          on: { click: _vm.clearHistory }
+        },
         [_vm._v("\n      Clear History\n    ")]
       )
     ])

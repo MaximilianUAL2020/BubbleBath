@@ -1,17 +1,14 @@
 <template>
   <div class="main-wrapper">
     <!-- svg canvas -->
-    <div class="flex outline no-select">
-      <div v-if="nodes" id="container"></div>
-      <span v-if="!nodes">no history</span>
-    </div>
+    <div class="flex outline no-select" id="container"></div>
     <!-- preview -->
     <div class="flex outline no-select">
       <span id="label">{{ state }}</span>
     </div>
     <!-- clear -->
-    <div>
-      <button @click="clearHistory" :disabled="!nodes">
+    <div class="no-select">
+      <button @click="clearHistory" :disabled="!nodes.length">
         Clear History
       </button>
     </div>
@@ -23,9 +20,10 @@ import * as d3 from "d3";
 export default {
   data() {
     return {
-      width: 248,
+      width: 246,
       height: 296,
-      nodes: true,
+      nodes: "",
+      totalVisits: 0,
     };
   },
   methods: {
@@ -45,18 +43,21 @@ export default {
       bool ? (value = start) : (value = end);
       return value;
     },
-    setRadius(count) {
-      let radius;
-      if (count < 500) {
-        radius = 25;
-      } else if (count > 500 && count < 1000) {
-        radius = count / 20;
-      } else if (count > 1200) {
-        radius = 40;
+    getTotalVisits() {
+      let temp = 0;
+      for (let i = 0; i < this.nodes.length; i++) {
+        temp += this.nodes[i].visitCount;
       }
+      this.totalVisits = temp;
+    },
+    setRadius(visits) {
+      let totalArea = (this.width * this.height) / 2;
+      let visitsFr = visits / this.totalVisits;
+      let area = totalArea * visitsFr;
+      let radius = Math.sqrt(area / Math.PI);
       return radius;
     },
-    history() {
+    getHistory() {
       chrome.history.search(
         {
           startTime: this.getTime(true),
@@ -66,21 +67,22 @@ export default {
         },
         (res) => {
           this.nodes = res;
-          if (!this.nodes.length) {
-            this.nodes = false;
-            return;
-          }
+          if (!this.nodes.length) return;
+          // get total visits
+          this.getTotalVisits();
+          // sort array
           this.nodes.sort(
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
           );
+          // trim array
           this.nodes.splice(5, this.nodes.length);
+          // set key values
           for (let i = 0; i < this.nodes.length; i++) {
             let temp = this.nodes[i];
             temp.x = this.randomPos().x;
             temp.y = this.randomPos().y;
             temp.radius = this.setRadius(temp.visitCount);
           }
-          console.log(this.nodes);
           this.d3();
         }
       );
@@ -124,10 +126,10 @@ export default {
         .attr("r", (d) => {
           return d.radius;
         })
-        .style("fill", "rgb(187, 21, 40)")
+        .style("fill", "rgb(23, 150, 23)")
         // mouse over
         .on("mouseover", function(d, i) {
-          d3.select(this).style("fill", "rgb(198, 115, 125)");
+          d3.select(this).style("fill", "rgb(116, 180, 116)");
           // create substring
           if (i.title.length > 18) {
             let sub = i.title.substring(0, 15);
@@ -139,7 +141,7 @@ export default {
         })
         // mouse out
         .on("mouseout", function() {
-          d3.select(this).style("fill", "rgb(187, 21, 40)");
+          d3.select(this).style("fill", "rgb(23, 150, 23)");
           elem.innerHTML = "Hover over bubbles";
         })
         // click event
@@ -170,44 +172,22 @@ export default {
         .style("dominant-baseline", "middle");
     },
     clearHistory() {
-      const moonLanding = new Date("July 20, 69 00:20:18 GMT+00:00");
-      let forever = moonLanding.getTime();
-      chrome.browsingData.remove(
-        {
-          since: forever,
-        },
-        {
-          appcache: true,
-          cache: true,
-          cacheStorage: true,
-          cookies: true,
-          downloads: false,
-          fileSystems: false,
-          formData: false,
-          history: true,
-          indexedDB: false,
-          localStorage: false,
-          passwords: false,
-          serviceWorkers: false,
-          webSQL: false,
-        },
-        () => {
-          this.nodes = "";
-        }
-      );
+      chrome.history.deleteAll(() => {
+        this.nodes = "";
+      });
     },
   },
   computed: {
     state() {
-      if (this.nodes) {
+      if (this.nodes.length) {
         return "Hover over Bubbles";
       } else {
-        return "Start Browsing";
+        return "No History";
       }
     },
   },
   mounted() {
-    this.history();
+    this.getHistory();
   },
 };
 </script>
