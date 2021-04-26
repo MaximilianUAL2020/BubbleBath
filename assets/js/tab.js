@@ -1,5 +1,7 @@
 import * as d3 from "d3";
 
+const data = document.getElementById("data");
+
 let width = window.innerWidth;
 let height = window.innerHeight;
 let nodes = [];
@@ -108,25 +110,16 @@ function sketch() {
     // mouse over
     .on("mouseover", function(d, i) {
       d3.select(this).style("fill", "rgb(112, 173, 114)");
+      data.innerHTML = i.title;
     })
     // mouse out
     .on("mouseout", function() {
       d3.select(this).style("fill", "rgb(14, 136, 19)");
+      data.innerHTML = "Hover over Bubbles";
     })
     // open url event
     .on("click", function(d, i) {
-      chrome.tabs.query(
-        {
-          active: true,
-          currentWindow: true,
-        },
-        (tabs) => {
-          chrome.tabs.sendMessage(tabs[0].id, {
-            message: "url",
-            url: i.url,
-          });
-        }
-      );
+      window.open(i.url, "_blank");
     });
 
   // append text

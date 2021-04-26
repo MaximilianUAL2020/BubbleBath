@@ -30687,6 +30687,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 
+var data = document.getElementById("data");
 var width = window.innerWidth;
 var height = window.innerHeight;
 var nodes = [];
@@ -30779,20 +30780,14 @@ function sketch() {
   }).style("fill", "rgb(14, 136, 19)") // mouse over
   .on("mouseover", function (d, i) {
     d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(112, 173, 114)");
+    data.innerHTML = i.title;
   }) // mouse out
   .on("mouseout", function () {
     d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(14, 136, 19)");
+    data.innerHTML = "Hover over Bubbles";
   }) // open url event
   .on("click", function (d, i) {
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true
-    }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        message: "url",
-        url: i.url
-      });
-    });
+    window.open(i.url, "_blank");
   }); // append text
 
   container.append("text").text(function (d) {
