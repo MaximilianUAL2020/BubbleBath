@@ -1,6 +1,9 @@
 import * as d3 from "d3";
 
 const data = document.getElementById("data");
+const prompt = document.getElementById("prompt");
+const preview = document.getElementById("preview");
+const bubbles = document.getElementById("bubblesContainer");
 
 let width = window.innerWidth;
 let height = window.innerHeight;
@@ -31,7 +34,7 @@ function getTotalVisits() {
   }
 }
 function setRadius(visits) {
-  let totalArea = (width * height) / 2;
+  let totalArea = (width * height) / 3;
   let visitsFr = visits / totalVisits;
   let area = totalArea * visitsFr;
   let radius = Math.sqrt(area / Math.PI);
@@ -49,6 +52,7 @@ function getHistory() {
       nodes = res;
       // handle empty response
       if (!nodes.length) return;
+      toggleHide();
       // get total visits
       getTotalVisits();
       // sort array
@@ -110,7 +114,14 @@ function sketch() {
     // mouse over
     .on("mouseover", function(d, i) {
       d3.select(this).style("fill", "rgb(112, 173, 114)");
-      data.innerHTML = i.title;
+      // trim long strings
+      if (i.title.length > 36) {
+        let sub = i.title.substring(0, 33);
+        let string = sub + "...";
+        data.innerHTML = string;
+      } else {
+        data.innerHTML = i.title;
+      }
     })
     // mouse out
     .on("mouseout", function() {
@@ -138,4 +149,9 @@ function sketch() {
   window.addEventListener("resize", () => {
     location.reload();
   });
+}
+function toggleHide() {
+  prompt.classList.toggle("hide");
+  bubbles.classList.toggle("hide");
+  preview.classList.toggle("hide");
 }
