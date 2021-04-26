@@ -1,7 +1,10 @@
 <template>
   <div class="main-wrapper">
     <!-- svg canvas -->
-    <div class="flex outline no-select" id="container"></div>
+    <div class="flex outline no-select">
+      <div v-if="nodes.length" id="container"></div>
+      <span v-if="!nodes.length">No History</span>
+    </div>
     <!-- preview -->
     <div class="flex outline no-select">
       <span id="label">{{ state }}</span>
@@ -22,7 +25,7 @@ export default {
     return {
       width: 246,
       height: 296,
-      nodes: "",
+      nodes: [null],
       totalVisits: 0,
     };
   },
@@ -44,11 +47,9 @@ export default {
       return value;
     },
     getTotalVisits() {
-      let temp = 0;
       for (let i = 0; i < this.nodes.length; i++) {
-        temp += this.nodes[i].visitCount;
+        this.totalVisits += this.nodes[i].visitCount;
       }
-      this.totalVisits = temp;
     },
     setRadius(visits) {
       let totalArea = (this.width * this.height) / 2;
@@ -67,6 +68,8 @@ export default {
         },
         (res) => {
           this.nodes = res;
+          // handle empty response
+          console.log(this.nodes.length);
           if (!this.nodes.length) return;
           // get total visits
           this.getTotalVisits();
@@ -91,6 +94,7 @@ export default {
       const forceX = d3.forceX(this.width / 2).strength(0.05);
       const forceY = d3.forceY(this.height / 2).strength(0.05);
       const elem = document.getElementById("label");
+
       // define d3 instance
       var simulation = d3
         .forceSimulation()
@@ -110,15 +114,17 @@ export default {
             return `translate(${d.x},${d.y})`;
           });
         });
+
       // create svg
       var svg = d3
         .select("#container")
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height);
+
       var sketch = svg.selectAll("g").data(this.nodes);
-      // append container
       var container = sketch.enter().append("g");
+
       // append circle
       container
         .style("cursor", "pointer")
@@ -126,11 +132,11 @@ export default {
         .attr("r", (d) => {
           return d.radius;
         })
-        .style("fill", "rgb(23, 150, 23)")
+        .style("fill", "rgb(14, 136, 19)")
         // mouse over
         .on("mouseover", function(d, i) {
-          d3.select(this).style("fill", "rgb(116, 180, 116)");
-          // create substring
+          d3.select(this).style("fill", "rgb(112, 173, 114)");
+          // trim long strings
           if (i.title.length > 18) {
             let sub = i.title.substring(0, 15);
             let string = sub + "...";
@@ -141,10 +147,10 @@ export default {
         })
         // mouse out
         .on("mouseout", function() {
-          d3.select(this).style("fill", "rgb(23, 150, 23)");
+          d3.select(this).style("fill", "rgb(14, 136, 19)");
           elem.innerHTML = "Hover over bubbles";
         })
-        // click event
+        // open url event
         .on("click", function(d, i) {
           chrome.tabs.query(
             {
@@ -160,6 +166,7 @@ export default {
             }
           );
         });
+
       // append text
       container
         .append("text")
@@ -173,17 +180,19 @@ export default {
     },
     clearHistory() {
       chrome.history.deleteAll(() => {
-        this.nodes = "";
+        this.nodes = [];
       });
     },
   },
   computed: {
     state() {
-      if (this.nodes.length) {
-        return "Hover over Bubbles";
+      let value;
+      if (!this.nodes.length) {
+        value = "Start Browsing";
       } else {
-        return "No History";
+        value = "Hover over Bubbles";
       }
+      return value;
     },
   },
   mounted() {
@@ -294,42 +303,5 @@ button:disabled {
   background: transparent;
   color: var(--medium);
   border: 1px solid var(--medium);
-}
-.switch-checkbox {
-  opacity: 0;
-  position: absolute;
-  pointer-events: none;
-}
-.switch-label {
-  padding: 0;
-  display: block;
-  cursor: pointer;
-  overflow: hidden;
-  height: var(--master-height);
-  line-height: var(--master-height);
-  border-radius: var(--master-height);
-  border: 1px solid var(--light);
-  transition: all 0.2s;
-}
-.switch-label:before {
-  bottom: 0;
-  margin: 0px;
-  content: "";
-  display: block;
-  position: absolute;
-  border-radius: 100px;
-  top: var(--myPadding);
-  right: var(--button-end);
-  width: var(--button-height);
-  height: var(--button-height);
-  background: var(--light);
-  transition: all 0.2s;
-}
-.switch-checkbox:checked + .switch-label {
-  background: var(--light);
-}
-.switch-checkbox:checked + .switch-label:before {
-  right: var(--myPadding);
-  background: var(--bg);
 }
 </style>

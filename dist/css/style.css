@@ -1,6 +1,21 @@
 :root {
   --bg: rgb(209, 209, 209);
-  --medium: rgb(116, 180, 116);
-  --light: rgb(23, 150, 23);
+  --medium: rgb(112, 173, 114);
+  --light: rgb(14, 136, 19);
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+}
+#bubblesContainer {
+  width: 100%;
+  height: 100%;
 }
 
