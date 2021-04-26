@@ -35,16 +35,10 @@ export default {
       let rh = Math.floor(Math.random() * this.height);
       return { w: rw, h: rh };
     },
-    getTime(bool) {
-      var value;
-      var date = new Date();
-      var start = date.setHours(0, 0, 0, 0);
-      var end = date.setHours(23, 59, 59, 999);
-      var offset = date.getTimezoneOffset();
-      start + offset;
-      end + offset;
-      bool ? (value = start) : (value = end);
-      return value;
+    now() {
+      let date = new Date();
+      let now = date.getTime();
+      return now;
     },
     getTotalVisits() {
       for (let i = 0; i < this.nodes.length; i++) {
@@ -61,8 +55,8 @@ export default {
     getHistory() {
       chrome.history.search(
         {
-          startTime: this.getTime(true),
-          endTime: this.getTime(false),
+          endTime: this.now(),
+          startTime: 0,
           maxResults: 100000,
           text: "",
         },

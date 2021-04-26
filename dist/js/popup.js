@@ -52,16 +52,10 @@ __webpack_require__.r(__webpack_exports__);
         h: rh
       };
     },
-    getTime: function getTime(bool) {
-      var value;
+    now: function now() {
       var date = new Date();
-      var start = date.setHours(0, 0, 0, 0);
-      var end = date.setHours(23, 59, 59, 999);
-      var offset = date.getTimezoneOffset();
-      start + offset;
-      end + offset;
-      bool ? value = start : value = end;
-      return value;
+      var now = date.getTime();
+      return now;
     },
     getTotalVisits: function getTotalVisits() {
       for (var i = 0; i < this.nodes.length; i++) {
@@ -79,8 +73,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       chrome.history.search({
-        startTime: this.getTime(true),
-        endTime: this.getTime(false),
+        endTime: this.now(),
+        startTime: 0,
         maxResults: 100000,
         text: ""
       }, function (res) {

@@ -17,17 +17,6 @@ function randomPos() {
   let rh = Math.floor(Math.random() * height);
   return { w: rw, h: rh };
 }
-function getTime(bool) {
-  var value;
-  var date = new Date();
-  var start = date.setHours(0, 0, 0, 0);
-  var end = date.setHours(23, 59, 59, 999);
-  var offset = date.getTimezoneOffset();
-  start + offset;
-  end + offset;
-  bool ? (value = start) : (value = end);
-  return value;
-}
 function getTotalVisits() {
   for (let i = 0; i < nodes.length; i++) {
     totalVisits += nodes[i].visitCount;
@@ -43,8 +32,8 @@ function setRadius(visits) {
 function getHistory() {
   chrome.history.search(
     {
-      startTime: getTime(true),
-      endTime: getTime(false),
+      endTime: now(),
+      startTime: 0,
       maxResults: 100000,
       text: "",
     },
@@ -115,8 +104,8 @@ function sketch() {
     .on("mouseover", function(d, i) {
       d3.select(this).style("fill", "rgb(112, 173, 114)");
       // trim long strings
-      if (i.title.length > 45) {
-        let sub = i.title.substring(0, 42);
+      if (i.title.length > 36) {
+        let sub = i.title.substring(0, 33);
         let string = sub + "...";
         data.innerHTML = string;
       } else {
@@ -154,4 +143,9 @@ function toggleHide() {
   prompt.classList.toggle("hide");
   bubbles.classList.toggle("hide");
   preview.classList.toggle("hide");
+}
+function now() {
+  let date = new Date();
+  let now = date.getTime();
+  return now;
 }

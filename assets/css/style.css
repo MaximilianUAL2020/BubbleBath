@@ -55,7 +55,7 @@ body {
   border: 1px solid var(--light);
 }
 #data {
-  padding: 1.2em;
+  padding: 2em;
 }
 #bubblesContainer {
   width: 100%;
