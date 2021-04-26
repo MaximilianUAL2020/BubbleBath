@@ -30785,8 +30785,8 @@ function sketch() {
   .on("mouseover", function (d, i) {
     d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(112, 173, 114)"); // trim long strings
 
-    if (i.title.length > 36) {
-      var sub = i.title.substring(0, 33);
+    if (i.title.length > 45) {
+      var sub = i.title.substring(0, 42);
       var string = sub + "...";
       data.innerHTML = string;
     } else {

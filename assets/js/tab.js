@@ -115,8 +115,8 @@ function sketch() {
     .on("mouseover", function(d, i) {
       d3.select(this).style("fill", "rgb(112, 173, 114)");
       // trim long strings
-      if (i.title.length > 36) {
-        let sub = i.title.substring(0, 33);
+      if (i.title.length > 45) {
+        let sub = i.title.substring(0, 42);
         let string = sub + "...";
         data.innerHTML = string;
       } else {
