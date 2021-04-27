@@ -42,7 +42,10 @@ export default {
     },
     getTotalVisits() {
       for (let i = 0; i < this.nodes.length; i++) {
-        this.totalVisits += this.nodes[i].visitCount;
+        let temp = this.nodes[i];
+        if (!temp.visitCount) temp.visitCount = 1;
+        if (!temp.title) temp.title = "?";
+        this.totalVisits += temp.visitCount;
       }
     },
     setRadius(visits) {
@@ -63,7 +66,6 @@ export default {
         (res) => {
           this.nodes = res;
           // handle empty response
-          console.log(this.nodes.length);
           if (!this.nodes.length) return;
           // get total visits
           this.getTotalVisits();
@@ -96,7 +98,7 @@ export default {
         .force("x", forceX)
         .force("y", forceY)
         .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-        .force("charge", d3.forceManyBody().strength(0))
+        .force("charge", d3.forceManyBody().strength(-5))
         .force(
           "collision",
           d3.forceCollide().radius((d) => {
@@ -152,7 +154,6 @@ export default {
               currentWindow: true,
             },
             (tabs) => {
-              console.log(tabs[0]);
               chrome.tabs.sendMessage(tabs[0].id, {
                 message: "url",
                 url: i.url,

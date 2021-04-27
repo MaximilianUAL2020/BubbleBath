@@ -59,7 +59,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     getTotalVisits: function getTotalVisits() {
       for (var i = 0; i < this.nodes.length; i++) {
-        this.totalVisits += this.nodes[i].visitCount;
+        var temp = this.nodes[i];
+        if (!temp.visitCount) temp.visitCount = 1;
+        if (!temp.title) temp.title = "?";
+        this.totalVisits += temp.visitCount;
       }
     },
     setRadius: function setRadius(visits) {
@@ -80,7 +83,6 @@ __webpack_require__.r(__webpack_exports__);
       }, function (res) {
         _this.nodes = res; // handle empty response
 
-        console.log(_this.nodes.length);
         if (!_this.nodes.length) return; // get total visits
 
         _this.getTotalVisits(); // sort array
@@ -111,7 +113,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var label = document.getElementById("label"); // define d3 instance
 
-      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
+      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(-5)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
       })).force("tick", function () {
         svg.selectAll("g").attr("transform", function (d) {
@@ -150,7 +152,6 @@ __webpack_require__.r(__webpack_exports__);
           active: true,
           currentWindow: true
         }, function (tabs) {
-          console.log(tabs[0]);
           chrome.tabs.sendMessage(tabs[0].id, {
             message: "url",
             url: i.url

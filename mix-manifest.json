@@ -4,5 +4,8 @@
     "/dist/js/popup.js": "/dist/js/popup.js",
     "/dist/js/tab.js": "/dist/js/tab.js",
     "/dist/css/style.css": "/dist/css/style.css",
-    "/dist/css/popup.css": "/dist/css/popup.css"
+    "/dist/css/popup.css": "/dist/css/popup.css",
+    "/dist/icons/128.png": "/dist/icons/128.png",
+    "/dist/icons/16.png": "/dist/icons/16.png",
+    "/dist/icons/48.png": "/dist/icons/48.png"
 }

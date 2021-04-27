@@ -53,7 +53,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     getTotalVisits: function getTotalVisits() {
       for (var i = 0; i < this.nodes.length; i++) {
-        this.totalVisits += this.nodes[i].visitCount;
+        var temp = this.nodes[i];
+        if (!temp.visitCount) temp.visitCount = 1;
+        if (!temp.title) temp.title = "?";
+        this.totalVisits += temp.visitCount;
       }
     },
     setRadius: function setRadius(visits) {
@@ -74,7 +77,6 @@ __webpack_require__.r(__webpack_exports__);
       }, function (res) {
         _this.nodes = res; // handle empty response
 
-        console.log(_this.nodes.length);
         if (!_this.nodes.length) return; // get total visits
 
         _this.getTotalVisits(); // sort array
@@ -85,7 +87,7 @@ __webpack_require__.r(__webpack_exports__);
         }); // trim array
 
 
-        _this.nodes.splice(5, _this.nodes.length); // set key values
+        _this.nodes.splice(200, _this.nodes.length); // set key values
 
 
         for (var i = 0; i < _this.nodes.length; i++) {
@@ -99,13 +101,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     d3: function d3() {
-      var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.05);
+      var forceX = d3__WEBPACK_IMPORTED_MODULE_0__.forceX(this.width / 2).strength(0.01);
 
-      var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.05);
+      var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.01);
 
       var label = document.getElementById("label"); // define d3 instance
 
-      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
+      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(-5)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
       })).force("tick", function () {
         svg.selectAll("g").attr("transform", function (d) {
@@ -126,8 +128,8 @@ __webpack_require__.r(__webpack_exports__);
         d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(112, 173, 114)"); // trim long strings
 
 
-        if (i.title.length > 24) {
-          var sub = i.title.substring(0, 21);
+        if (i.title.length > 36) {
+          var sub = i.title.substring(0, 33);
           var string = sub + "...";
           label.innerHTML = string;
         } else {
@@ -145,7 +147,7 @@ __webpack_require__.r(__webpack_exports__);
 
       container.append("text").text(function (d) {
         return d.visitCount;
-      }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle"); // resize event
+      }).style("font-size", "24px").style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle"); // resize event
 
       window.addEventListener("resize", function () {
         location.reload();
@@ -176,7 +178,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n}\n.no-select[data-v-3ee62cf8] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\n.flex[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n#preview[data-v-3ee62cf8] {\n  top: 20px;\n  left: 20px;\n  display: flex;\n  min-width: 20%;\n  position: fixed;\n  border-radius: 50px;\n  align-items: center;\n  max-width: -webkit-max-content;\n  max-width: -moz-max-content;\n  max-width: max-content;\n  justify-content: center;\n  background: transparent;\n  border: 1px solid var(--light);\n}\n#label[data-v-3ee62cf8] {\n  padding: 2em;\n}\n#bubblesContainer[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n.no-select[data-v-3ee62cf8] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\n.flex[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n#preview[data-v-3ee62cf8] {\n  top: 20px;\n  left: 20px;\n  display: flex;\n  min-width: 20%;\n  position: fixed;\n  border-radius: 50px;\n  align-items: center;\n  max-width: -webkit-max-content;\n  max-width: -moz-max-content;\n  max-width: max-content;\n  justify-content: center;\n  background: transparent;\n  border: 1px solid var(--light);\n}\n#label[data-v-3ee62cf8] {\n  padding: 2em;\n}\n#bubblesContainer[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -36,7 +36,10 @@ export default {
     },
     getTotalVisits() {
       for (let i = 0; i < this.nodes.length; i++) {
-        this.totalVisits += this.nodes[i].visitCount;
+        let temp = this.nodes[i];
+        if (!temp.visitCount) temp.visitCount = 1;
+        if (!temp.title) temp.title = "?";
+        this.totalVisits += temp.visitCount;
       }
     },
     setRadius(visits) {
@@ -57,7 +60,6 @@ export default {
         (res) => {
           this.nodes = res;
           // handle empty response
-          console.log(this.nodes.length);
           if (!this.nodes.length) return;
           // get total visits
           this.getTotalVisits();
@@ -66,7 +68,7 @@ export default {
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
           );
           // trim array
-          this.nodes.splice(5, this.nodes.length);
+          this.nodes.splice(200, this.nodes.length);
           // set key values
           for (let i = 0; i < this.nodes.length; i++) {
             let temp = this.nodes[i];
@@ -79,8 +81,8 @@ export default {
       );
     },
     d3() {
-      const forceX = d3.forceX(this.width / 2).strength(0.05);
-      const forceY = d3.forceY(this.height / 2).strength(0.05);
+      const forceX = d3.forceX(this.width / 2).strength(0.01);
+      const forceY = d3.forceY(this.height / 2).strength(0.01);
       const label = document.getElementById("label");
 
       // define d3 instance
@@ -90,7 +92,7 @@ export default {
         .force("x", forceX)
         .force("y", forceY)
         .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-        .force("charge", d3.forceManyBody().strength(0))
+        .force("charge", d3.forceManyBody().strength(-5))
         .force(
           "collision",
           d3.forceCollide().radius((d) => {
@@ -125,8 +127,8 @@ export default {
         .on("mouseover", function(d, i) {
           d3.select(this).style("fill", "rgb(112, 173, 114)");
           // trim long strings
-          if (i.title.length > 24) {
-            let sub = i.title.substring(0, 21);
+          if (i.title.length > 36) {
+            let sub = i.title.substring(0, 33);
             let string = sub + "...";
             label.innerHTML = string;
           } else {
@@ -149,6 +151,7 @@ export default {
         .text((d) => {
           return d.visitCount;
         })
+        .style("font-size", "24px")
         .style("text-anchor", "middle")
         .style("pointer-events", "none")
         .style("fill", "rgb(209, 209, 209)")
@@ -170,6 +173,7 @@ export default {
 .main-wrapper {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 .no-select {
   user-select: none;
