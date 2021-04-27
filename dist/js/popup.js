@@ -66,7 +66,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     setRadius: function setRadius(visits) {
-      var totalArea = this.width * this.height / 2;
+      var totalArea = this.nodes.length === 5 ? this.width * this.height : this.width * this.height / 2;
       var visitsFr = visits / this.totalVisits;
       var area = totalArea * visitsFr;
       var radius = Math.sqrt(area / Math.PI);

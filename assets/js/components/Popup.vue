@@ -49,7 +49,10 @@ export default {
       }
     },
     setRadius(visits) {
-      let totalArea = (this.width * this.height) / 2;
+      let totalArea =
+        this.nodes.length === 5
+          ? this.width * this.height
+          : (this.width * this.height) / 2;
       let visitsFr = visits / this.totalVisits;
       let area = totalArea * visitsFr;
       let radius = Math.sqrt(area / Math.PI);
