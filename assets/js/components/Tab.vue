@@ -1,19 +1,13 @@
 <template>
   <div class="main-wrapper">
-    <!-- svg canvas -->
-    <div class="flex outline no-select">
-      <div v-if="nodes.length" id="container"></div>
-      <span v-if="!nodes.length">No History</span>
-    </div>
     <!-- preview -->
-    <div class="flex outline no-select">
-      <span ref="label" id="label">{{ state }}</span>
-    </div>
-    <!-- clear -->
-    <div class="no-select">
-      <button @click="clearHistory" :disabled="!nodes.length">
-        Clear History
-      </button>
+    <section v-if="nodes.length" id="preview" class="no-select">
+      <span id="label">Hover over bubbles</span>
+    </section>
+    <!-- bubbles -->
+    <div class="flex no-select">
+      <div v-if="nodes.length" id="bubblesContainer"></div>
+      <span v-if="!nodes.length">No History</span>
     </div>
   </div>
 </template>
@@ -23,10 +17,10 @@ import * as d3 from "d3";
 export default {
   data() {
     return {
-      width: 246,
-      height: 296,
       nodes: [null],
       totalVisits: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
   },
   methods: {
@@ -46,7 +40,7 @@ export default {
       }
     },
     setRadius(visits) {
-      let totalArea = (this.width * this.height) / 2;
+      let totalArea = (this.width * this.height) / 3;
       let visitsFr = visits / this.totalVisits;
       let area = totalArea * visitsFr;
       let radius = Math.sqrt(area / Math.PI);
@@ -111,7 +105,7 @@ export default {
 
       // create svg
       var svg = d3
-        .select("#container")
+        .select("#bubblesContainer")
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height);
@@ -131,8 +125,8 @@ export default {
         .on("mouseover", function(d, i) {
           d3.select(this).style("fill", "rgb(112, 173, 114)");
           // trim long strings
-          if (i.title.length > 18) {
-            let sub = i.title.substring(0, 15);
+          if (i.title.length > 24) {
+            let sub = i.title.substring(0, 21);
             let string = sub + "...";
             label.innerHTML = string;
           } else {
@@ -146,19 +140,7 @@ export default {
         })
         // open url event
         .on("click", function(d, i) {
-          chrome.tabs.query(
-            {
-              active: true,
-              currentWindow: true,
-            },
-            (tabs) => {
-              console.log(tabs[0]);
-              chrome.tabs.sendMessage(tabs[0].id, {
-                message: "url",
-                url: i.url,
-              });
-            }
-          );
+          window.open(i.url, "_blank");
         });
 
       // append text
@@ -171,23 +153,11 @@ export default {
         .style("pointer-events", "none")
         .style("fill", "rgb(209, 209, 209)")
         .style("dominant-baseline", "middle");
-    },
-    clearHistory() {
-      chrome.history.deleteAll(() => {
-        this.nodes = [];
-        this.$refs.label.innerHTML = "Start Browsing";
+
+      // resize event
+      window.addEventListener("resize", () => {
+        location.reload();
       });
-    },
-  },
-  computed: {
-    state() {
-      let value;
-      if (!this.nodes.length) {
-        value = "Start Browsing";
-      } else {
-        value = "Hover over Bubbles";
-      }
-      return value;
     },
   },
   mounted() {
@@ -197,71 +167,9 @@ export default {
 </script>
 
 <style scoped>
-#label {
-  overflow: hidden;
-  white-space: nowrap;
-}
 .main-wrapper {
-  gap: 1em;
   width: 100%;
   height: 100%;
-  padding: 1em;
-  display: grid;
-  background-color: var(--bg);
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto auto auto var(--master-height) var(
-      --master-height
-    );
-  grid-template-areas:
-    "canvas canvas canvas"
-    "canvas canvas canvas"
-    "canvas canvas canvas"
-    "canvas canvas canvas"
-    "preview preview preview"
-    "clear clear clear";
-}
-.flex {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.outline {
-  background: transparent;
-  color: var(--light);
-  border: 1px solid var(--light);
-}
-.filled {
-  border: none;
-  color: var(--bg);
-  background: var(--light);
-}
-.main-wrapper div {
-  width: 100%;
-  height: 100%;
-}
-.main-wrapper div:nth-of-type(1) {
-  overflow: hidden;
-  grid-area: canvas;
-  border-radius: 20px;
-}
-.main-wrapper div:nth-of-type(2) {
-  grid-area: preview;
-  border-radius: 100px;
-}
-.main-wrapper div:nth-of-type(3) {
-  grid-area: clear;
-  border-radius: 100px;
-}
-#no-border {
-  border: none !important;
-}
-::-moz-selection {
-  background: var(--light);
-  color: var(--bg);
-}
-::selection {
-  background: var(--light);
-  color: var(--bg);
 }
 .no-select {
   user-select: none;
@@ -271,32 +179,31 @@ export default {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
-button,
-button:focus,
-button:active {
+.flex {
   width: 100%;
   height: 100%;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: inherit;
-  background-color: transparent;
-  color: var(--bg);
-  background: var(--light);
-  border: 1px solid var(--bg);
-  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-button:hover {
-  cursor: pointer;
+#preview {
+  top: 20px;
+  left: 20px;
+  display: flex;
+  min-width: 20%;
+  position: fixed;
+  border-radius: 50px;
+  align-items: center;
+  max-width: max-content;
+  justify-content: center;
   background: transparent;
-  color: var(--light);
   border: 1px solid var(--light);
-  transition: all 0.2s;
 }
-button:disabled {
-  cursor: not-allowed;
-  background: transparent;
-  color: var(--medium);
-  border: 1px solid var(--medium);
+#label {
+  padding: 2em;
+}
+#bubblesContainer {
+  width: 100%;
+  height: 100%;
 }
 </style>

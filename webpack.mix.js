@@ -8,6 +8,7 @@ mix
   .js("assets/js/background.js", "dist/js")
   .js("assets/js/content.js", "dist/js")
   .js("assets/js/popup.js", "dist/js")
+  .vue()
   .js("assets/js/tab.js", "dist/js")
   .vue()
   .options({ processCssUrls: false });

@@ -109,7 +109,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.05);
 
-      var elem = document.getElementById("label"); // define d3 instance
+      var label = document.getElementById("label"); // define d3 instance
 
       var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(0)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
@@ -135,15 +135,15 @@ __webpack_require__.r(__webpack_exports__);
         if (i.title.length > 18) {
           var sub = i.title.substring(0, 15);
           var string = sub + "...";
-          elem.innerHTML = string;
+          label.innerHTML = string;
         } else {
-          elem.innerHTML = i.title;
+          label.innerHTML = i.title;
         }
       }) // mouse out
       .on("mouseout", function () {
         d3__WEBPACK_IMPORTED_MODULE_0__.select(this).style("fill", "rgb(14, 136, 19)");
 
-        elem.innerHTML = "Hover over bubbles";
+        label.innerHTML = "Hover over bubbles";
       }) // open url event
       .on("click", function (d, i) {
         chrome.tabs.query({
@@ -167,6 +167,7 @@ __webpack_require__.r(__webpack_exports__);
 
       chrome.history.deleteAll(function () {
         _this2.nodes = [];
+        _this2.$refs.label.innerHTML = "Start Browsing";
       });
     }
   },
@@ -31583,7 +31584,9 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "flex outline no-select" }, [
-      _c("span", { attrs: { id: "label" } }, [_vm._v(_vm._s(_vm.state))])
+      _c("span", { ref: "label", attrs: { id: "label" } }, [
+        _vm._v(_vm._s(_vm.state))
+      ])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "no-select" }, [
