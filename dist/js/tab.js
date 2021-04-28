@@ -109,7 +109,8 @@ __webpack_require__.r(__webpack_exports__);
       var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.01);
 
       var label = document.getElementById("label");
-      var small = window.matchMedia("(max-height: 800px)"); // define d3 instance
+      var smallWidth = window.matchMedia("(max-width: 1400px)");
+      var smallHeight = window.matchMedia("(max-height: 800px)"); // define d3 instance
 
       var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(-5)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
@@ -151,7 +152,7 @@ __webpack_require__.r(__webpack_exports__);
 
       container.append("text").style("alignment-baseline", "middle").style("dominant-baseline", "middle").style("pointer-events", "none").style("text-anchor", "middle").style("text-align", "center").append("tspan").text(function (d) {
         return d.visitCount;
-      }).style("fill", "rgb(209, 209, 209)").style("font-size", "".concat(small.matches ? "12px" : "16px")); // resize event
+      }).style("fill", "rgb(209, 209, 209)").style("font-size", "".concat(smallWidth.matches || smallHeight.matches ? "12px" : "16px")); // resize event
 
       window.addEventListener("resize", function () {
         location.reload();

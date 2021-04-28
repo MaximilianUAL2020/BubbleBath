@@ -87,7 +87,8 @@ export default {
       const forceX = d3.forceX(this.width / 2).strength(0.01);
       const forceY = d3.forceY(this.height / 2).strength(0.01);
       const label = document.getElementById("label");
-      const small = window.matchMedia("(max-height: 800px)");
+      const smallWidth = window.matchMedia("(max-width: 1400px)");
+      const smallHeight = window.matchMedia("(max-height: 800px)");
 
       // define d3 instance
       var simulation = d3
@@ -162,7 +163,10 @@ export default {
           return d.visitCount;
         })
         .style("fill", "rgb(209, 209, 209)")
-        .style("font-size", `${small.matches ? "12px" : "16px"}`);
+        .style(
+          "font-size",
+          `${smallWidth.matches || smallHeight.matches ? "12px" : "16px"}`
+        );
 
       // resize event
       window.addEventListener("resize", () => {
