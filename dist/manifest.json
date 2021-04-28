@@ -1,8 +1,8 @@
 {
   "name": "BubbleBath",
   "version": "1.0.0",
-  "description": "Understand how you spend your time while browsing the web.",
-  "permissions": ["history", "tabs", "browsingData", "https://*/", "http://*/"],
+  "description": "Understand what parts of the internet you visit the most.",
+  "permissions": ["history", "tabs", "browsingData"],
   "icons": {
     "16": "icons/16.png",
     "48": "icons/48.png",

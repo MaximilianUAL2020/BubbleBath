@@ -2,10 +2,10 @@
   <div class="main-wrapper">
     <!-- preview -->
     <section v-if="nodes.length" id="preview" class="no-select">
-      <span id="label">Hover over bubbles</span>
+      <span id="label">Loading Bubbles...</span>
     </section>
     <!-- bubbles -->
-    <div class="flex no-select">
+    <div id="bubblesWrapper" class="flex no-select">
       <div v-if="nodes.length" id="bubblesContainer"></div>
       <span v-if="!nodes.length">No History</span>
     </div>
@@ -61,6 +61,9 @@ export default {
           this.nodes = res;
           // handle empty response
           if (!this.nodes.length) return;
+          // remove loading status from label
+          const label = document.getElementById("label");
+          label.innerHTML = "Hover over Bubbles";
           // get total visits
           this.getTotalVisits();
           // sort array
@@ -84,6 +87,7 @@ export default {
       const forceX = d3.forceX(this.width / 2).strength(0.01);
       const forceY = d3.forceY(this.height / 2).strength(0.01);
       const label = document.getElementById("label");
+      const small = window.matchMedia("(max-height: 800px)");
 
       // define d3 instance
       var simulation = d3
@@ -148,14 +152,17 @@ export default {
       // append text
       container
         .append("text")
+        .style("alignment-baseline", "middle")
+        .style("dominant-baseline", "middle")
+        .style("pointer-events", "none")
+        .style("text-anchor", "middle")
+        .style("text-align", "center")
+        .append("tspan")
         .text((d) => {
           return d.visitCount;
         })
-        .style("font-size", "24px")
-        .style("text-anchor", "middle")
-        .style("pointer-events", "none")
         .style("fill", "rgb(209, 209, 209)")
-        .style("dominant-baseline", "middle");
+        .style("font-size", `${small.matches ? "12px" : "16px"}`);
 
       // resize event
       window.addEventListener("resize", () => {
@@ -190,9 +197,14 @@ export default {
   align-items: center;
   justify-content: center;
 }
+#bubblesWrapper {
+  z-index: 100;
+  position: absolute;
+}
 #preview {
   top: 20px;
   left: 20px;
+  z-index: 0;
   display: flex;
   min-width: 20%;
   position: fixed;

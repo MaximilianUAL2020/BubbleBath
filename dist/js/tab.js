@@ -77,7 +77,10 @@ __webpack_require__.r(__webpack_exports__);
       }, function (res) {
         _this.nodes = res; // handle empty response
 
-        if (!_this.nodes.length) return; // get total visits
+        if (!_this.nodes.length) return; // remove loading status from label
+
+        var label = document.getElementById("label");
+        label.innerHTML = "Hover over Bubbles"; // get total visits
 
         _this.getTotalVisits(); // sort array
 
@@ -105,7 +108,8 @@ __webpack_require__.r(__webpack_exports__);
 
       var forceY = d3__WEBPACK_IMPORTED_MODULE_0__.forceY(this.height / 2).strength(0.01);
 
-      var label = document.getElementById("label"); // define d3 instance
+      var label = document.getElementById("label");
+      var small = window.matchMedia("(max-height: 800px)"); // define d3 instance
 
       var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(-5)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
@@ -145,9 +149,9 @@ __webpack_require__.r(__webpack_exports__);
         window.open(i.url, "_blank");
       }); // append text
 
-      container.append("text").text(function (d) {
+      container.append("text").style("alignment-baseline", "middle").style("dominant-baseline", "middle").style("pointer-events", "none").style("text-anchor", "middle").style("text-align", "center").append("tspan").text(function (d) {
         return d.visitCount;
-      }).style("font-size", "24px").style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle"); // resize event
+      }).style("fill", "rgb(209, 209, 209)").style("font-size", "".concat(small.matches ? "12px" : "16px")); // resize event
 
       window.addEventListener("resize", function () {
         location.reload();
@@ -178,7 +182,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n.no-select[data-v-3ee62cf8] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\n.flex[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n#preview[data-v-3ee62cf8] {\n  top: 20px;\n  left: 20px;\n  display: flex;\n  min-width: 20%;\n  position: fixed;\n  border-radius: 50px;\n  align-items: center;\n  max-width: -webkit-max-content;\n  max-width: -moz-max-content;\n  max-width: max-content;\n  justify-content: center;\n  background: transparent;\n  border: 1px solid var(--light);\n}\n#label[data-v-3ee62cf8] {\n  padding: 2em;\n}\n#bubblesContainer[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n.no-select[data-v-3ee62cf8] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\n.flex[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n#bubblesWrapper[data-v-3ee62cf8] {\n  z-index: 100;\n  position: absolute;\n}\n#preview[data-v-3ee62cf8] {\n  top: 20px;\n  left: 20px;\n  z-index: 0;\n  display: flex;\n  min-width: 20%;\n  position: fixed;\n  border-radius: 50px;\n  align-items: center;\n  max-width: -webkit-max-content;\n  max-width: -moz-max-content;\n  max-width: max-content;\n  justify-content: center;\n  background: transparent;\n  border: 1px solid var(--light);\n}\n#label[data-v-3ee62cf8] {\n  padding: 2em;\n}\n#bubblesContainer[data-v-3ee62cf8] {\n  width: 100%;\n  height: 100%;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31549,17 +31553,21 @@ var render = function() {
   return _c("div", { staticClass: "main-wrapper" }, [
     _vm.nodes.length
       ? _c("section", { staticClass: "no-select", attrs: { id: "preview" } }, [
-          _c("span", { attrs: { id: "label" } }, [_vm._v("Hover over bubbles")])
+          _c("span", { attrs: { id: "label" } }, [_vm._v("Loading Bubbles...")])
         ])
       : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "flex no-select" }, [
-      _vm.nodes.length
-        ? _c("div", { attrs: { id: "bubblesContainer" } })
-        : _vm._e(),
-      _vm._v(" "),
-      !_vm.nodes.length ? _c("span", [_vm._v("No History")]) : _vm._e()
-    ])
+    _c(
+      "div",
+      { staticClass: "flex no-select", attrs: { id: "bubblesWrapper" } },
+      [
+        _vm.nodes.length
+          ? _c("div", { attrs: { id: "bubblesContainer" } })
+          : _vm._e(),
+        _vm._v(" "),
+        !_vm.nodes.length ? _c("span", [_vm._v("No History")]) : _vm._e()
+      ]
+    )
   ])
 }
 var staticRenderFns = []

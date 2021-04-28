@@ -2,7 +2,7 @@
   <div class="main-wrapper">
     <!-- svg canvas -->
     <div class="flex outline no-select">
-      <div v-if="nodes.length" id="container"></div>
+      <div v-if="nodes.length" id="bubblesContainer"></div>
       <span v-if="!nodes.length">No History</span>
     </div>
     <!-- preview -->
@@ -116,7 +116,7 @@ export default {
 
       // create svg
       var svg = d3
-        .select("#container")
+        .select("#bubblesContainer")
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height);
@@ -168,17 +168,21 @@ export default {
       // append text
       container
         .append("text")
+        .style("alignment-baseline", "middle")
+        .style("dominant-baseline", "middle")
+        .style("pointer-events", "none")
+        .style("text-anchor", "middle")
+        .style("text-align", "center")
+        .append("tspan")
         .text((d) => {
           return d.visitCount;
         })
-        .style("text-anchor", "middle")
-        .style("pointer-events", "none")
         .style("fill", "rgb(209, 209, 209)")
-        .style("dominant-baseline", "middle");
+        .style("font-size", `16px`);
     },
     clearHistory() {
       chrome.history.deleteAll(() => {
-        this.nodes = [];
+        this.nodes = [null];
         this.$refs.label.innerHTML = "Start Browsing";
       });
     },
@@ -201,10 +205,6 @@ export default {
 </script>
 
 <style scoped>
-#label {
-  overflow: hidden;
-  white-space: nowrap;
-}
 .main-wrapper {
   gap: 1em;
   width: 100%;
@@ -259,13 +259,9 @@ export default {
 #no-border {
   border: none !important;
 }
-::-moz-selection {
-  background: var(--light);
-  color: var(--bg);
-}
-::selection {
-  background: var(--light);
-  color: var(--bg);
+#label {
+  overflow: hidden;
+  white-space: nowrap;
 }
 .no-select {
   user-select: none;

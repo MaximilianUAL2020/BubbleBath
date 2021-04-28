@@ -122,7 +122,7 @@ __webpack_require__.r(__webpack_exports__);
       }); // create svg
 
 
-      var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#container").append("svg").attr("width", this.width).attr("height", this.height);
+      var svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#bubblesContainer").append("svg").attr("width", this.width).attr("height", this.height);
 
       var sketch = svg.selectAll("g").data(this.nodes);
       var container = sketch.enter().append("g"); // append circle
@@ -159,15 +159,15 @@ __webpack_require__.r(__webpack_exports__);
         });
       }); // append text
 
-      container.append("text").text(function (d) {
+      container.append("text").style("alignment-baseline", "middle").style("dominant-baseline", "middle").style("pointer-events", "none").style("text-anchor", "middle").style("text-align", "center").append("tspan").text(function (d) {
         return d.visitCount;
-      }).style("text-anchor", "middle").style("pointer-events", "none").style("fill", "rgb(209, 209, 209)").style("dominant-baseline", "middle");
+      }).style("fill", "rgb(209, 209, 209)").style("font-size", "16px");
     },
     clearHistory: function clearHistory() {
       var _this2 = this;
 
       chrome.history.deleteAll(function () {
-        _this2.nodes = [];
+        _this2.nodes = [null];
         _this2.$refs.label.innerHTML = "Start Browsing";
       });
     }
@@ -209,7 +209,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#label[data-v-a8fbc54a] {\n  overflow: hidden;\n  white-space: nowrap;\n}\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--bg);\n  grid-template-columns: repeat(3, 1fr);\n  grid-template-rows: auto auto auto auto var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"preview preview preview\"\n    \"clear clear clear\";\n}\n.flex[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.outline[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--bg);\n  background: var(--light);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  overflow: hidden;\n  grid-area: canvas;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: preview;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  grid-area: clear;\n  border-radius: 100px;\n}\n#no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n[data-v-a8fbc54a]::-moz-selection {\n  background: var(--light);\n  color: var(--bg);\n}\n[data-v-a8fbc54a]::selection {\n  background: var(--light);\n  color: var(--bg);\n}\n.no-select[data-v-a8fbc54a] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  border-radius: inherit;\n  background-color: transparent;\n  color: var(--bg);\n  background: var(--light);\n  border: 1px solid var(--bg);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:disabled {\n  cursor: not-allowed;\n  background: transparent;\n  color: var(--medium);\n  border: 1px solid var(--medium);\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--bg);\n  grid-template-columns: repeat(3, 1fr);\n  grid-template-rows: auto auto auto auto var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"canvas canvas canvas\"\n    \"preview preview preview\"\n    \"clear clear clear\";\n}\n.flex[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.outline[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--bg);\n  background: var(--light);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  overflow: hidden;\n  grid-area: canvas;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: preview;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  grid-area: clear;\n  border-radius: 100px;\n}\n#no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n#label[data-v-a8fbc54a] {\n  overflow: hidden;\n  white-space: nowrap;\n}\n.no-select[data-v-a8fbc54a] {\n  user-select: none;\n  -ms-user-select: none;\n  -moz-user-select: none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -webkit-touch-callout: none;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  border-radius: inherit;\n  background-color: transparent;\n  color: var(--bg);\n  background: var(--light);\n  border: 1px solid var(--bg);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  background: transparent;\n  color: var(--light);\n  border: 1px solid var(--light);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:disabled {\n  cursor: not-allowed;\n  background: transparent;\n  color: var(--medium);\n  border: 1px solid var(--medium);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31579,7 +31579,9 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "main-wrapper" }, [
     _c("div", { staticClass: "flex outline no-select" }, [
-      _vm.nodes.length ? _c("div", { attrs: { id: "container" } }) : _vm._e(),
+      _vm.nodes.length
+        ? _c("div", { attrs: { id: "bubblesContainer" } })
+        : _vm._e(),
       _vm._v(" "),
       !_vm.nodes.length ? _c("span", [_vm._v("No History")]) : _vm._e()
     ]),
