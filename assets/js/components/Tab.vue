@@ -1,13 +1,17 @@
 <template>
   <div class="main-wrapper">
     <!-- preview -->
-    <section v-if="nodes.length" id="preview" class="no-select">
+    <section
+      v-if="nodes.length && !tooSmall.status"
+      id="preview"
+      class="no-select"
+    >
       <span id="label">Loading Bubbles...</span>
     </section>
     <!-- bubbles -->
     <div id="bubblesWrapper" class="flex no-select">
-      <div v-if="nodes.length" id="bubblesContainer"></div>
-      <span v-if="!nodes.length">No History</span>
+      <div v-if="nodes.length && !tooSmall.status" id="bubblesContainer"></div>
+      <span v-if="!nodes.length || tooSmall.status">{{ tooSmall.text }}</span>
     </div>
   </div>
 </template>
@@ -41,6 +45,7 @@ export default {
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
+      console.log(this.totalVisits);
     },
     setRadius(visits) {
       let totalArea = (this.width * this.height) / 3;
@@ -63,15 +68,15 @@ export default {
           if (!this.nodes.length) return;
           // remove loading status from label
           const label = document.getElementById("label");
-          label.innerHTML = "Hover over Bubbles";
-          // get total visits
-          this.getTotalVisits();
+          if (!this.tooSmall.status) label.innerHTML = "Hover over Bubbles";
           // sort array
           this.nodes.sort(
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
           );
           // trim array
-          this.nodes.splice(200, this.nodes.length);
+          this.nodes.splice(100, this.nodes.length);
+          // get total visits
+          this.getTotalVisits();
           // set key values
           for (let i = 0; i < this.nodes.length; i++) {
             let temp = this.nodes[i];
@@ -172,6 +177,17 @@ export default {
       window.addEventListener("resize", () => {
         location.reload();
       });
+    },
+  },
+  computed: {
+    tooSmall() {
+      let value;
+      const smallWidth = window.matchMedia("(max-width: 800px)");
+      const smallHeight = window.matchMedia("(max-height: 800px)");
+      smallWidth.matches || smallHeight.matches
+        ? (value = { status: true, text: "Too Small" })
+        : (value = { status: false, text: "Empty History" });
+      return value;
     },
   },
   mounted() {

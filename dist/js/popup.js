@@ -64,9 +64,11 @@ __webpack_require__.r(__webpack_exports__);
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
+
+      console.log("total visits: " + this.totalVisits);
     },
     setRadius: function setRadius(visits) {
-      var totalArea = this.nodes.length === 5 ? this.width * this.height : this.width * this.height / 2;
+      var totalArea = this.width * this.height / 2;
       var visitsFr = visits / this.totalVisits;
       var area = totalArea * visitsFr;
       var radius = Math.sqrt(area / Math.PI);
@@ -83,17 +85,17 @@ __webpack_require__.r(__webpack_exports__);
       }, function (res) {
         _this.nodes = res; // handle empty response
 
-        if (!_this.nodes.length) return; // get total visits
-
-        _this.getTotalVisits(); // sort array
-
+        if (!_this.nodes.length) return; // sort array
 
         _this.nodes.sort(function (a, b) {
           return parseFloat(b.visitCount) - parseFloat(a.visitCount);
         }); // trim array
 
 
-        _this.nodes.splice(5, _this.nodes.length); // set key values
+        _this.nodes.splice(5, _this.nodes.length); // get total visits
+
+
+        _this.getTotalVisits(); // set key values
 
 
         for (var i = 0; i < _this.nodes.length; i++) {
@@ -167,7 +169,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       chrome.history.deleteAll(function () {
-        _this2.nodes = [null];
+        _this2.nodes = [];
         _this2.$refs.label.innerHTML = "Start Browsing";
       });
     }
@@ -31577,32 +31579,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "main-wrapper" }, [
-    _c("div", { staticClass: "flex outline no-select" }, [
-      _vm.nodes.length
-        ? _c("div", { attrs: { id: "bubblesContainer" } })
-        : _vm._e(),
-      _vm._v(" "),
-      !_vm.nodes.length ? _c("span", [_vm._v("No History")]) : _vm._e()
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "flex outline no-select" }, [
-      _c("span", { ref: "label", attrs: { id: "label" } }, [
-        _vm._v(_vm._s(_vm.state))
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "no-select" }, [
-      _c(
-        "button",
-        {
-          attrs: { disabled: !_vm.nodes.length },
-          on: { click: _vm.clearHistory }
-        },
-        [_vm._v("\n      Clear History\n    ")]
-      )
-    ])
-  ])
+  return _c("div")
 }
 var staticRenderFns = []
 render._withStripped = true

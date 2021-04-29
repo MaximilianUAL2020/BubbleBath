@@ -27,6 +27,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -58,6 +62,8 @@ __webpack_require__.r(__webpack_exports__);
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
+
+      console.log(this.totalVisits);
     },
     setRadius: function setRadius(visits) {
       var totalArea = this.width * this.height / 3;
@@ -80,17 +86,17 @@ __webpack_require__.r(__webpack_exports__);
         if (!_this.nodes.length) return; // remove loading status from label
 
         var label = document.getElementById("label");
-        label.innerHTML = "Hover over Bubbles"; // get total visits
-
-        _this.getTotalVisits(); // sort array
-
+        if (!_this.tooSmall.status) label.innerHTML = "Hover over Bubbles"; // sort array
 
         _this.nodes.sort(function (a, b) {
           return parseFloat(b.visitCount) - parseFloat(a.visitCount);
         }); // trim array
 
 
-        _this.nodes.splice(200, _this.nodes.length); // set key values
+        _this.nodes.splice(100, _this.nodes.length); // get total visits
+
+
+        _this.getTotalVisits(); // set key values
 
 
         for (var i = 0; i < _this.nodes.length; i++) {
@@ -157,6 +163,21 @@ __webpack_require__.r(__webpack_exports__);
       window.addEventListener("resize", function () {
         location.reload();
       });
+    }
+  },
+  computed: {
+    tooSmall: function tooSmall() {
+      var value;
+      var smallWidth = window.matchMedia("(max-width: 800px)");
+      var smallHeight = window.matchMedia("(max-height: 800px)");
+      smallWidth.matches || smallHeight.matches ? value = {
+        status: true,
+        text: "Too Small"
+      } : value = {
+        status: false,
+        text: "Empty History"
+      };
+      return value;
     }
   },
   mounted: function mounted() {
@@ -31552,7 +31573,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "main-wrapper" }, [
-    _vm.nodes.length
+    _vm.nodes.length && !_vm.tooSmall.status
       ? _c("section", { staticClass: "no-select", attrs: { id: "preview" } }, [
           _c("span", { attrs: { id: "label" } }, [_vm._v("Loading Bubbles...")])
         ])
@@ -31562,11 +31583,13 @@ var render = function() {
       "div",
       { staticClass: "flex no-select", attrs: { id: "bubblesWrapper" } },
       [
-        _vm.nodes.length
+        _vm.nodes.length && !_vm.tooSmall.status
           ? _c("div", { attrs: { id: "bubblesContainer" } })
           : _vm._e(),
         _vm._v(" "),
-        !_vm.nodes.length ? _c("span", [_vm._v("No History")]) : _vm._e()
+        !_vm.nodes.length || _vm.tooSmall.status
+          ? _c("span", [_vm._v(_vm._s(_vm.tooSmall.text))])
+          : _vm._e()
       ]
     )
   ])

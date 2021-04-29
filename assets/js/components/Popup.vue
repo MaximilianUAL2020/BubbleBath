@@ -3,7 +3,7 @@
     <!-- svg canvas -->
     <div class="flex outline no-select">
       <div v-if="nodes.length" id="bubblesContainer"></div>
-      <span v-if="!nodes.length">No History</span>
+      <span v-if="!nodes.length">Empty History</span>
     </div>
     <!-- preview -->
     <div class="flex outline no-select">
@@ -47,12 +47,10 @@ export default {
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
+      console.log("total visits: " + this.totalVisits);
     },
     setRadius(visits) {
-      let totalArea =
-        this.nodes.length === 5
-          ? this.width * this.height
-          : (this.width * this.height) / 2;
+      let totalArea = (this.width * this.height) / 2;
       let visitsFr = visits / this.totalVisits;
       let area = totalArea * visitsFr;
       let radius = Math.sqrt(area / Math.PI);
@@ -70,14 +68,14 @@ export default {
           this.nodes = res;
           // handle empty response
           if (!this.nodes.length) return;
-          // get total visits
-          this.getTotalVisits();
           // sort array
           this.nodes.sort(
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
           );
           // trim array
           this.nodes.splice(5, this.nodes.length);
+          // get total visits
+          this.getTotalVisits();
           // set key values
           for (let i = 0; i < this.nodes.length; i++) {
             let temp = this.nodes[i];
@@ -182,7 +180,7 @@ export default {
     },
     clearHistory() {
       chrome.history.deleteAll(() => {
-        this.nodes = [null];
+        this.nodes = [];
         this.$refs.label.innerHTML = "Start Browsing";
       });
     },
@@ -300,3 +298,5 @@ button:disabled {
   border: 1px solid var(--medium);
 }
 </style>
+
+<template></template>
