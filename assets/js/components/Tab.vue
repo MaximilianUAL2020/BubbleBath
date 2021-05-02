@@ -2,7 +2,7 @@
   <div class="main-wrapper">
     <!-- preview -->
     <section
-      v-if="nodes.length && !tooSmall.status"
+      v-if="nodes.length && !tooSmall.state"
       id="preview"
       class="no-select"
     >
@@ -10,8 +10,8 @@
     </section>
     <!-- bubbles -->
     <div id="bubblesWrapper" class="flex no-select">
-      <div v-if="nodes.length && !tooSmall.status" id="bubblesContainer"></div>
-      <span v-if="!nodes.length || tooSmall.status">{{ tooSmall.text }}</span>
+      <div v-if="nodes.length && !tooSmall.state" id="bubblesContainer"></div>
+      <span v-if="!nodes.length || tooSmall.state">{{ tooSmall.text }}</span>
     </div>
   </div>
 </template>
@@ -45,7 +45,6 @@ export default {
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
-      console.log(this.totalVisits);
     },
     setRadius(visits) {
       let totalArea = (this.width * this.height) / 3;
@@ -66,9 +65,9 @@ export default {
           this.nodes = res;
           // handle empty response
           if (!this.nodes.length) return;
-          // remove loading status from label
+          // remove loading state from label
           const label = document.getElementById("label");
-          if (!this.tooSmall.status) label.innerHTML = "Hover over Bubbles";
+          if (!this.tooSmall.state) label.innerHTML = "Hover over Bubbles";
           // sort array
           this.nodes.sort(
             (a, b) => parseFloat(b.visitCount) - parseFloat(a.visitCount)
@@ -102,7 +101,10 @@ export default {
         .force("x", forceX)
         .force("y", forceY)
         .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-        .force("charge", d3.forceManyBody().strength(-5))
+        .force(
+          "charge",
+          d3.forceManyBody().strength(this.nodes.length < 10 ? -5 : -15)
+        )
         .force(
           "collision",
           d3.forceCollide().radius((d) => {
@@ -185,8 +187,8 @@ export default {
       const smallWidth = window.matchMedia("(max-width: 800px)");
       const smallHeight = window.matchMedia("(max-height: 800px)");
       smallWidth.matches || smallHeight.matches
-        ? (value = { status: true, text: "Too Small" })
-        : (value = { status: false, text: "Empty History" });
+        ? (value = { state: true, text: "Too Small" })
+        : (value = { state: false, text: "Empty History" });
       return value;
     },
   },
@@ -236,7 +238,7 @@ export default {
   border: 1px solid var(--light);
 }
 #label {
-  padding: 2em;
+  padding: 20px;
 }
 #bubblesContainer {
   width: 100%;

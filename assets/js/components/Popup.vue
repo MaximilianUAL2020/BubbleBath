@@ -47,7 +47,6 @@ export default {
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
-      console.log("total visits: " + this.totalVisits);
     },
     setRadius(visits) {
       let totalArea = (this.width * this.height) / 2;
@@ -298,5 +297,3 @@ button:disabled {
   border: 1px solid var(--medium);
 }
 </style>
-
-<template></template>

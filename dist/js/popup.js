@@ -64,8 +64,6 @@ __webpack_require__.r(__webpack_exports__);
         if (!temp.title) temp.title = "?";
         this.totalVisits += temp.visitCount;
       }
-
-      console.log("total visits: " + this.totalVisits);
     },
     setRadius: function setRadius(visits) {
       var totalArea = this.width * this.height / 2;
@@ -31579,7 +31577,32 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", { staticClass: "main-wrapper" }, [
+    _c("div", { staticClass: "flex outline no-select" }, [
+      _vm.nodes.length
+        ? _c("div", { attrs: { id: "bubblesContainer" } })
+        : _vm._e(),
+      _vm._v(" "),
+      !_vm.nodes.length ? _c("span", [_vm._v("Empty History")]) : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "flex outline no-select" }, [
+      _c("span", { ref: "label", attrs: { id: "label" } }, [
+        _vm._v(_vm._s(_vm.state))
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "no-select" }, [
+      _c(
+        "button",
+        {
+          attrs: { disabled: !_vm.nodes.length },
+          on: { click: _vm.clearHistory }
+        },
+        [_vm._v("\n      Clear History\n    ")]
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
