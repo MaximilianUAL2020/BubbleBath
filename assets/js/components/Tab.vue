@@ -103,7 +103,7 @@ export default {
         .force("center", d3.forceCenter(this.width / 2, this.height / 2))
         .force(
           "charge",
-          d3.forceManyBody().strength(this.nodes.length < 10 ? -5 : -15)
+          d3.forceManyBody().strength(this.nodes.length < 10 ? -5 : -10)
         )
         .force(
           "collision",
@@ -184,8 +184,8 @@ export default {
   computed: {
     tooSmall() {
       let value;
-      const smallWidth = window.matchMedia("(max-width: 800px)");
-      const smallHeight = window.matchMedia("(max-height: 800px)");
+      const smallWidth = window.matchMedia("(max-width: 600px)");
+      const smallHeight = window.matchMedia("(max-height: 600px)");
       smallWidth.matches || smallHeight.matches
         ? (value = { state: true, text: "Too Small" })
         : (value = { state: false, text: "Empty History" });

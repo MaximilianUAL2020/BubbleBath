@@ -116,7 +116,7 @@ __webpack_require__.r(__webpack_exports__);
       var smallWidth = window.matchMedia("(max-width: 1400px)");
       var smallHeight = window.matchMedia("(max-height: 800px)"); // define d3 instance
 
-      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(this.nodes.length < 10 ? -5 : -15)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
+      var simulation = d3__WEBPACK_IMPORTED_MODULE_0__.forceSimulation().nodes(this.nodes).force("x", forceX).force("y", forceY).force("center", d3__WEBPACK_IMPORTED_MODULE_0__.forceCenter(this.width / 2, this.height / 2)).force("charge", d3__WEBPACK_IMPORTED_MODULE_0__.forceManyBody().strength(this.nodes.length < 10 ? -5 : -10)).force("collision", d3__WEBPACK_IMPORTED_MODULE_0__.forceCollide().radius(function (d) {
         return d.radius;
       })).force("tick", function () {
         svg.selectAll("g").attr("transform", function (d) {
@@ -166,8 +166,8 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     tooSmall: function tooSmall() {
       var value;
-      var smallWidth = window.matchMedia("(max-width: 800px)");
-      var smallHeight = window.matchMedia("(max-height: 800px)");
+      var smallWidth = window.matchMedia("(max-width: 600px)");
+      var smallHeight = window.matchMedia("(max-height: 600px)");
       smallWidth.matches || smallHeight.matches ? value = {
         state: true,
         text: "Too Small"
