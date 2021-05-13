@@ -6,11 +6,11 @@ BubbleBath is a chrome extension that organizes your browser history according t
 
 ## Case Study
 
-To view the entire case study, please visit my [website](#).
+To view the entire case study, please visit my [website](https://www.maxi.studio/chromeKit).
 
 ## Download
 
-To add BubbleBath as a chrome extension, click [here](#).
+To add BubbleBath as a chrome extension, click [here](https://chrome.google.com/webstore/detail/bubblebath/aibknmkfhgkppfflcdkbmblojihiojjo).
 
 ![alt text](https://cdn.glitch.com/b4cd9c5e-4515-4298-ac12-97fd727eaf29%2F210505_Screen_Shot_5.png?v=1620239681834)
 ![alt text](https://cdn.glitch.com/b4cd9c5e-4515-4298-ac12-97fd727eaf29%2F210505_Screen_Shot_6.png?v=1620239682737)
